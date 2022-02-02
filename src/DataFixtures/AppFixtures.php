@@ -32,33 +32,41 @@ class AppFixtures extends Fixture
             $user = new User();
             $hash = $this->hasher->hashPassword($user, "password");
             $reference = 1;
-
             $user
-            ->setEmail($faker->email)
-            ->setPassword($hash)
+                ->setEmail($faker->email)
+                ->setPassword($hash)
                 ->setFirstName($faker->firstName)
-                ->setLastName($faker->lastName);
+                ->setLastName($faker->lastName)
+                ->setCompany($faker->company)
+                ->setStreetAddress($faker->streetAddress)
+                ->setPostcode($faker->postcode)
+                ->setCity($faker->city)
+                ->setPhoneNumber($faker->phoneNumber);
 
             $manager->persist($user);
 
             for($c = 0; $c < mt_rand(5, 20); $c++) {
                 $customer = new Customer();
                 $customer
+                    ->setUser($user)
                     ->setFirstName($faker->firstName)
                     ->setLastName($faker->lastName)
-                    ->setCompany($faker->company)
                     ->setEmail($faker->email)
-                    ->setUser($user);
+                    ->setCompany($faker->company)
+                    ->setStreetAddress($faker->streetAddress)
+                    ->setPostcode($faker->postcode)
+                    ->setCity($faker->city)
+                    ->setPhoneNumber($faker->phoneNumber);
     
                 $manager->persist($customer);
 
                 for($i = 0; $i < mt_rand(3, 10); $i++) {
                     $invoice = new Invoice();
                     $invoice
-                        ->setAmount($faker->randomFloat(2, 250, 5000))
+                        ->setCustomer($customer)
+                        ->setAmount(strval($faker->randomFloat(2, 250, 5000)))
                         ->setSentAt($faker->dateTimeBetween('-6 months'))
                         ->setStatus($faker->randomElement(['SENT', 'PAID', 'CANCELLED']))
-                        ->setCustomer($customer)
                         ->setReference($reference);
 
                     $reference++;

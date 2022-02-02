@@ -7,19 +7,32 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get' => ['path' => '/utilisateurs'],
+        'post' => ['path' => '/utilisateurs']
+    ],
+    itemOperations: [
+        'get' => ['path' => '/utilisateurs/{id}'],
+        'patch' => ['path' => '/utilisateurs/{id}'],
+        'delete' => ['path' => '/utilisateurs/{id}']
+    ],
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups("invoices_read")]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups("invoices_read")]
     private $email;
 
     #[ORM\Column(type: 'json')]
@@ -29,10 +42,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("invoices_read")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("invoices_read")]
     private $lastName;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $company;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $streetAddress;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $postcode;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $city;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $phoneNumber;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Customer::class)]
     private $customers;
@@ -133,6 +163,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->lastName = $lastName;
 
+        return $this;
+    }
+
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+    
+    public function setCompany(?string $company): self
+    {
+        $this->company = $company;
+        
+        return $this;
+    }
+    
+    public function getStreetAddress(): ?string
+    {
+        return $this->streetAddress;
+    }
+    
+    public function setStreetAddress(?string $streetAddress): self
+    {
+        $this->streetAddress = $streetAddress;
+        
+        return $this;
+    }
+    
+    public function getPostcode(): ?string
+    {
+        return $this->postcode;
+    }
+    
+    public function setPostcode(?string $postcode): self
+    {
+        $this->postcode = $postcode;
+        
+        return $this;
+    }
+    
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+    
+    public function setCity(?string $city): self
+    {
+        $this->city = $city;
+        
+        return $this;
+    }
+    
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+    
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+        
         return $this;
     }
 
