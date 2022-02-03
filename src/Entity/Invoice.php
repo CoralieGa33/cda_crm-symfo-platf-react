@@ -19,7 +19,15 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
     itemOperations: [
         'get' => ['path' => '/factures/{id}'],
         'patch' => ['path' => '/factures/{id}'],
-        'delete' => ['path' => '/factures/{id}']
+        'delete' => ['path' => '/factures/{id}'],
+        'increment' => ['method' => 'post', 'path' => '/factures/{id}/increment', 'controller' => 'App\Controller\InvoiceIncrementationController']
+    ],
+    subresourceOperations: [
+        'api_customers_invoices_get_subresource' => [
+            'normalization_context' => [
+                'groups' => ['invoices_subresource'],
+            ],
+        ],
     ],
     attributes: [
         "pagination_enabled" => true,
@@ -34,19 +42,19 @@ class Invoice
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["invoices_read", "customers_read"])]
+    #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
     private $id;
 
     #[ORM\Column(type: 'decimal', precision: 7, scale: 2)]
-    #[Groups(["invoices_read", "customers_read"])]
+    #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
     private $amount;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(["invoices_read", "customers_read"])]
+    #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
     private $sentAt;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["invoices_read", "customers_read"])]
+    #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
     private $status;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'invoices')]
@@ -55,7 +63,7 @@ class Invoice
     private $customer;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(["invoices_read", "customers_read"])]
+    #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
     private $reference;
 
     /**
@@ -63,7 +71,7 @@ class Invoice
      *
      * @return User
      */
-    #[Groups("invoices_read")]
+    #[Groups(["invoices_read", "invoices_subresource"])]
     public function getUser(): User
     {
         return $this->customer->getUser();

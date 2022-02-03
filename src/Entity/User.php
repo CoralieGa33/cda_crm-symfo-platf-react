@@ -28,11 +28,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("invoices_read")]
+    #[Groups("invoices_read", "invoices_subresource")]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups("invoices_read")]
+    #[Groups(["invoices_read", "invoices_subresource"])]
     private $email;
 
     #[ORM\Column(type: 'json')]
@@ -42,11 +42,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("invoices_read")]
+    #[Groups(["invoices_read", "invoices_subresource"])]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("invoices_read")]
+    #[Groups(["invoices_read", "invoices_subresource"])]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
