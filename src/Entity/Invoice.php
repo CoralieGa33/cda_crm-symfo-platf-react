@@ -7,8 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\InvoiceRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\InvoiceIncrementationController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InvoiceRepository::class)]
 #[ApiResource(
@@ -20,7 +23,24 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
         'get' => ['path' => '/factures/{id}'],
         'patch' => ['path' => '/factures/{id}'],
         'delete' => ['path' => '/factures/{id}'],
-        'increment' => ['method' => 'post', 'path' => '/factures/{id}/increment', 'controller' => 'App\Controller\InvoiceIncrementationController']
+        'increment' => [
+            'method' => 'post',
+            'path' => '/factures/{id}/increment',
+            'controller' => InvoiceIncrementationController::class,
+            'openapi_context' => [
+                'summary' => 'Donne une nouvelle référence à une facture.',
+                'description' => "Change la référence d'une facture donnée.",
+                'requestBody' => [
+                    'content' => [
+                        'application/json' => [
+                            'schema'  => [
+                                'type'       => 'object',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ]
     ],
     subresourceOperations: [
         'api_customers_invoices_get_subresource' => [
@@ -34,7 +54,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
         "pagination_items_per_page" => 20
     ],
     order: ["sentAt" => "DESC"],
-    normalizationContext: ['groups' => ['invoices_read']]
+    normalizationContext: ['groups' => ['invoices_read']],
+    denormalizationContext: ['disable_type_enforcement' => true]
 )]
 #[ApiFilter(OrderFilter::class, properties: ["amount", "sentAt", "status"])]
 class Invoice
@@ -47,23 +68,38 @@ class Invoice
 
     #[ORM\Column(type: 'decimal', precision: 7, scale: 2)]
     #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
+    #[Assert\NotBlank(message: "Le montant de la facture est obligatoire.")]
+    #[Assert\Type(
+        type: 'numeric',
+        message: 'Le montant de la facture doit être numérique.',
+    )]
     private $amount;
 
     #[ORM\Column(type: 'datetime')]
     #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
+    #[Assert\NotBlank(message: "La date de la facture est obligatoire.")]
+    #[Assert\Type(type:'datetime', message: "La date doit être au format YYYY-MM-DD")]
     private $sentAt;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
+    #[Assert\NotBlank(message: "Le statut de la facture est obligatoire.")]
+    #[Assert\Choice(['SENT', 'PAID', 'CANCELLED'], message: "Le statut n'est pas valide.")]
     private $status;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'invoices')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups("invoices_read")]
+    #[Assert\NotBlank(message: "Le client de la facture doit être renseigné.")]
     private $customer;
 
     #[ORM\Column(type: 'integer')]
     #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
+    #[Assert\NotBlank(message: "La référence de la facture est obligatoire.")]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La référence de la facture doit être un nombre.',
+    )]
     private $reference;
 
     /**
@@ -87,7 +123,7 @@ class Invoice
         return $this->amount;
     }
 
-    public function setAmount(string $amount): self
+    public function setAmount($amount): self
     {
         $this->amount = $amount;
 
@@ -99,7 +135,7 @@ class Invoice
         return $this->sentAt;
     }
 
-    public function setSentAt(\DateTimeInterface $sentAt): self
+    public function setSentAt($sentAt): self
     {
         $this->sentAt = $sentAt;
 
@@ -135,7 +171,7 @@ class Invoice
         return $this->reference;
     }
 
-    public function setReference(int $reference): self
+    public function setReference($reference): self
     {
         $this->reference = $reference;
 

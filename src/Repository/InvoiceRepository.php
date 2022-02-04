@@ -19,6 +19,15 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
 
+    public function findOneByMaxReference($customerId) {
+        $conn = $this->getEntityManager()->getConnection();
+        
+        $sql = 'SELECT MAX(reference) FROM invoice WHERE invoice.customer_id = :customerId';
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->executeQuery(['customerId' => $customerId])->fetchOne();
+        return $result;
+    }
+
     // /**
     //  * @return Invoice[] Returns an array of Invoice objects
     //  */
