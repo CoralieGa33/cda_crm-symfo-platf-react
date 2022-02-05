@@ -25,6 +25,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         'patch' => ['path' => '/utilisateurs/{id}'],
         'delete' => ['path' => '/utilisateurs/{id}']
     ],
+    normalizationContext: ['groups' => ['users_read']],
 )]
 #[UniqueEntity('email', message: "Un utilisateur avec cet email existe déjà")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -32,11 +33,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("invoices_read", "invoices_subresource")]
+    #[Groups("invoices_read", "invoices_subresource", "users_read")]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180)]
-    #[Groups(["invoices_read", "invoices_subresource"])]
+    #[Groups(["invoices_read", "invoices_subresource", "users_read"])]
     #[Assert\NotBlank(message: "L'email est obligatoire.")]
     #[Assert\Email(
         message: "L'email {{ value }} n'est pas une adresse valide.",
@@ -50,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["invoices_read", "invoices_subresource"])]
+    #[Groups(["invoices_read", "invoices_subresource", "users_read"])]
     #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
     #[Assert\Length(
         min: 2,
@@ -61,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["invoices_read", "invoices_subresource"])]
+    #[Groups(["invoices_read", "invoices_subresource", "users_read"])]
     #[Assert\NotBlank(message: "Le nom est obligatoire.")]
     #[Assert\Length(
         min: 2,
@@ -72,18 +73,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("users_read")]
     private $company;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("users_read")]
     private $streetAddress;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("users_read")]
     private $postcode;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+
     private $city;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("users_read")]
     private $phoneNumber;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Customer::class)]
