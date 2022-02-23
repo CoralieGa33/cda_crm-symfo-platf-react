@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Invoice;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Invoice|null find($id, $lockMode = null, $lockVersion = null)
@@ -26,6 +27,18 @@ class InvoiceRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery(['customerId' => $customerId])->fetchOne();
         return $result;
+    }
+
+    public function findNextReference(User $user) {
+        return $this->createQueryBuilder("invoice")
+                    ->select("invoice.reference")
+                    ->join("invoice.customer", "customer")
+                    ->where("customer.user = :user")
+                    ->setParameter("user", $user)
+                    ->orderBy("invoice.reference", "DESC")
+                    ->setMaxResults(1)
+                    ->getQuery()
+                    ->getSingleScalarResult() + 1;
     }
 
     // /**
