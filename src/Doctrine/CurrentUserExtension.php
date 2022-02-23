@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use App\Entity\Customer;
 use App\Entity\Invoice;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface {
@@ -25,7 +26,11 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
         // Trouver l'utilisateur connecté
         $user = $this->security->getUser();
         // Si requete Invoice ou Customer, on agit dessus
-        if(($resourceClass === Customer::class || $resourceClass === Invoice::class) && !$this->auth->isGranted('ROLE_ADMIN')) {
+        if(
+            ($resourceClass === Customer::class || $resourceClass === Invoice::class)
+            && !$this->auth->isGranted('ROLE_ADMIN')
+            && $user instanceof User
+        ){
             // récupérer alias :
             $rootAlias = $queryBuilder->getRootAliases()[0];
             // SELECT o FROM App\Entity\Invoice AS o
