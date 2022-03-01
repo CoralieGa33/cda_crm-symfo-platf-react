@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Navbar from './js/components/Navbar';
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
@@ -10,7 +11,11 @@ import './styles/app.css';
 console.log("App running !!!");
 
 const App = () => {
-    return <h2>Hello React : )</h2>
+    return (
+        <>
+            <Navbar />
+        </>
+    )
 };
 
 const rootElement = document.querySelector("#app");
