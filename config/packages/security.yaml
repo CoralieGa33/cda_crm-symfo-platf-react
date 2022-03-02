@@ -48,7 +48,8 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/utilisateurs, methods: [POST], roles: PUBLIC_ACCESS }
         - { path: ^/api/utilisateurs, methods: [GET], roles: ROLE_ADMIN }
-        - { path: ^/api/clients,       roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/api/clients,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/clients,       roles: PUBLIC_ACCESS }
         - { path: ^/api/factures,       roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }

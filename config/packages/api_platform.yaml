@@ -13,4 +13,4 @@ api_platform:
     collection:
         pagination:
             enabled_parameter_name: pagination # optional
-            items_per_page_parameter_name: itemsPerPage # Default value
+            items_per_page_parameter_name: count # Default value

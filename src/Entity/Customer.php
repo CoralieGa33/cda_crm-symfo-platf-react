@@ -117,6 +117,7 @@ class Customer
             $total += floatval($invoice->getAmount());
         }
         return number_format($total, 2, '.', ' ');
+        
     }
 
     /**
