@@ -6,14 +6,25 @@ const CustomersPage = (props) => {
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const itemsPerPage = 10;
 
+    // Récupérer la liste des clients
+    const fetchCustomers = async () => {
+        try {
+            const data = await customersAPI.findAll();
+            setCustomers(data);
+        } catch(error) {
+            console.log(error.response)
+        }
+    }
+
+    // Au chargement du composant, on récupère les clients
     useEffect(() => {
-        customersAPI.findAll()
-            .then(data => setCustomers(data))
-            .catch(error => console.log(error.response))
+        fetchCustomers()
     }, []);
 
-    const handleDelete = async(id) => {
+    // Suppression d'un client (qui n'a pas de facture)
+    const handleDelete = async (id) => {
         const originalCustomers = [...customers];
         setCustomers(customers.filter(customer => customer.id !==id));
 
@@ -30,17 +41,17 @@ const CustomersPage = (props) => {
         //     })
     };
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
+    // Gestion du changement de page
+    const handlePageChange = (page) => setCurrentPage(page);
 
-    const handleSearch = (event) => {
-        setSearch(event.currentTarget.value);
+    // Pour rechercher un client par mot clé
+    const handleSearch = ({ currentTarget }) => {
+        setSearch(currentTarget.value);
         setCurrentPage(1);
     }
 
-    const itemsPerPage = 10;
     
+    // Filtrage des clients en fonction du mot clé entré dans la recherche
     const filteredCustomers = customers.filter(c => 
         c.firstName.toLowerCase().includes(search.toLowerCase()) || 
         c.lastName.toLowerCase().includes(search.toLowerCase()) ||
@@ -48,6 +59,7 @@ const CustomersPage = (props) => {
         (c.company && c.company.toLowerCase().includes(search.toLowerCase()))
     )
         
+    // Pagination des données
     const paginatedCustomers = Pagination.getData(
         filteredCustomers,
         currentPage,
@@ -69,6 +81,7 @@ const CustomersPage = (props) => {
                     />
                 </div>
             </div>
+
             <table className="table table-hover">
                 <thead>
                     <tr>
@@ -90,7 +103,7 @@ const CustomersPage = (props) => {
                             <td>{customer.email}</td>
                             <td>{customer.company}</td>
                             <td className="text-center"><span className="badge bg-dark">{customer.invoices.length}</span></td>
-                            <td className="text-end">{customer.totalAmount} €</td>
+                            <td className="text-end">{parseFloat(customer.totalAmount).toLocaleString("fr-FR", {style: "currency", currency: "EUR"})}</td>
                             <td>
                                 <button
                                     onClick={() => handleDelete(customer.id)}

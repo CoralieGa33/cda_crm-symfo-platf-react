@@ -12,7 +12,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
@@ -116,7 +115,7 @@ class Customer
         foreach($this->invoices as $invoice) {
             $total += floatval($invoice->getAmount());
         }
-        return number_format($total, 2, '.', ' ');
+        return $total;
         
     }
 
@@ -134,7 +133,7 @@ class Customer
                 $total += floatval($invoice->getAmount());
             }
         }
-        return number_format($total, 2, '.', ' ');
+        return $total;
     }
 
     public function getId(): ?int

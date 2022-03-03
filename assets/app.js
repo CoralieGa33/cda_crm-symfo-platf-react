@@ -6,6 +6,7 @@ import Navbar from './js/components/Navbar';
 import HomePage from './js/pages/HomePage';
 import CustomersPage from './js/pages/CustomersPage';
 import CustomersPagePlatPagination from './js/pages/CustomersPagePlatPagination';
+import InvoicesPage from './js/pages/InvoicesPage';
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
@@ -23,6 +24,7 @@ const App = () => {
                     <Route exact path='/' element={<HomePage />} />
                     <Route exact path='/clients' element={<CustomersPage />} />
                     {/* <Route exact path='/clients' element={<CustomersPagePlatPagination />} /> */}
+                    <Route exact path='/factures' element={<InvoicesPage />} />
                 </Routes>
             </main>
         </HashRouter>
