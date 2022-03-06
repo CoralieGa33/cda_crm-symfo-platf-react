@@ -36,11 +36,11 @@ class InvoiceReferenceSubscriber implements EventSubscriberInterface {
         // Récupérer l'utilisateur connecté
         $user = $this->security->getUser();
         // Récupérer la référence suivante
-//        $nextReference = $this->invoiceRepository->findNextReference($user);
+        $nextReference = $this->invoiceRepository->findNextReference($user);
         // L'assigner à la nouvelle facture
         
         if ($invoice instanceof Invoice && $method === "POST") {
-//            $invoice->setReference($nextReference);
+            $invoice->setReference($nextReference);
 
             // pas le meilleur endroit, mais on peut gérer aussi une date par défault
             if (empty($invoice->getSentAt())) {
