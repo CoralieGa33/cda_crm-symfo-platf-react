@@ -5,6 +5,7 @@ import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './js/components/Navbar';
 import PrivateRoute from './js/components/PrivateRoute';
 import AuthContext from './js/contexts/AuthContext';
+import Customerpage from './js/pages/CustomerPage';
 import CustomersPage from './js/pages/CustomersPage';
 import HomePage from './js/pages/HomePage';
 //import CustomersPagePlatPagination from './js/pages/CustomersPagePlatPagination';
@@ -37,6 +38,7 @@ const App = () => {
                         <Route path='/login' element={<LoginPage />} />
                         <Route path='/clients' element={<PrivateRoute element={<CustomersPage />} />} />
                         {/* <Route path='/clients' element={<CustomersPagePlatPagination />} /> */}
+                        <Route path='/clients/:id' element={<PrivateRoute element={<Customerpage />} />} />
                         <Route path='/factures' element={<PrivateRoute element={<InvoicesPage />} />} />
                         <Route path="*" element={<p>Oups cette page n'existe pas: 404!</p>} />
                     </Routes>

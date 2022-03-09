@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get' => ['path' => '/clients/{id}'],
-        'patch' => ['path' => '/clients/{id}'],
+        'put' => ['path' => '/clients/{id}'],
         'delete' => ['path' => '/clients/{id}']
     ],
     subresourceOperations: [
@@ -44,24 +44,24 @@ class Customer
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["customers_read", "invoices_read"])]
-    #[Assert\NotBlank(message: "Le prénom du client est obligatoire.")]
     #[Assert\Length(
         min: 2,
         max: 100,
         minMessage: 'Le prénom doit faire au moins {{ limit }} charactères.',
         maxMessage: 'Le prénom doit faire moins de {{ limit }} charactères.',
-    )]
+        )]
+    #[Assert\NotBlank(message: "Le prénom du client est obligatoire.")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["customers_read", "invoices_read"])]
-    #[Assert\NotBlank(message: "Le nom du client est obligatoire.")]
     #[Assert\Length(
         min: 2,
         max: 100,
         minMessage: 'Le nom doit faire au moins {{ limit }} charactères.',
         maxMessage: 'Le nom doit faire moins de {{ limit }} charactères.',
-    )]
+        )]
+    #[Assert\NotBlank(message: "Le nom du client est obligatoire.")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -77,15 +77,19 @@ class Customer
     private $company;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("customers_read")]
     private $streetAddress;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("customers_read")]
     private $postcode;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("customers_read")]
     private $city;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups("customers_read")]
     private $phoneNumber;
 
     #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Invoice::class)]
