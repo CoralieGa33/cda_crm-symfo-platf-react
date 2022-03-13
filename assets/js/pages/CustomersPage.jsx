@@ -88,7 +88,6 @@ const CustomersPage = (props) => {
             <table className="table table-hover">
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Client</th>
                         <th>Email</th>
                         <th>Entreprise</th>
@@ -101,13 +100,13 @@ const CustomersPage = (props) => {
                 <tbody>
                     {paginatedCustomers.map(customer =>
                         <tr key={customer.id}>
-                            <td>{customer.id}</td>
                             <td><a href="#">{customer.firstName} {customer.lastName}</a></td>
                             <td>{customer.email}</td>
                             <td>{customer.company}</td>
                             <td className="text-center"><span className="badge bg-dark">{customer.invoices.length}</span></td>
                             <td className="text-end">{parseFloat(customer.totalAmount).toLocaleString("fr-FR", {style: "currency", currency: "EUR"})}</td>
                             <td>
+                                <Link to={"/clients/" + customer.id} className="btn btn-sm btn-warning me-2">Editer</Link>
                                 <button
                                     onClick={() => handleDelete(customer.id)}
                                     disabled={customer.invoices.length > 0}

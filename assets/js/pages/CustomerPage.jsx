@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Field from '../components/forms/Field';
-import axios from 'axios';
+import CustomersAPI from '../services/customersAPI';
 
-const Customerpage = (props) => {
+const CustomerPage = (props) => {
     const navigate = useNavigate();
     
     const id  = useParams().id || "new";
@@ -32,18 +32,19 @@ const Customerpage = (props) => {
 
     const [editing, setEditing] = useState(false);
 
+    // Récupération d'un client par son id
     const fetchCustomer = async (id) => {
         try {
-            const data = await axios
-                .get("http://127.0.0.1:8000/api/clients/" + id)
-                .then(response => response.data)
-            const { lastName, firstName, email, company, streetAddress, postcode, city, phoneNumber } = data;
+            const data = await CustomersAPI.findOne(id);
+            const { lastName, firstName, email, company, streetAddress, postcode, city, phoneNumber } = await CustomersAPI.findOne(id);
             setCustomer({ lastName, firstName, email, company, streetAddress, postcode, city, phoneNumber });
         } catch (error) {
-            console.log(error.response)
+            console.log(error.response);
+            navigate("/clients");
         }
     };
 
+    // Chargement du composant en fonction de la valeur de id
     useEffect(() => {
         if(id !== "new") {
             setEditing(true);
@@ -51,6 +52,7 @@ const Customerpage = (props) => {
         }
     }, [id]);
 
+    // Gestion du changement de la valeur des inputs
     const handleChange = ({ currentTarget }) => {
         const { name, value } = currentTarget;
 
@@ -66,20 +68,19 @@ const Customerpage = (props) => {
 
         try {
             if(editing) {
-                const response = await axios
-                    .put("http://127.0.0.1:8000/api/clients/" + id, customer)
+                await CustomersAPI.update(id, customer);
                 // TODO : notification de succès
             } else {
-                const response = await axios
-                    .post("http://127.0.0.1:8000/api/clients", customer)
-                navigate("/clients")
+                await CustomersAPI.create(customer);
+                navigate("/clients");
             }
             setErrors({});
-        } catch (error) {
-            if(error.response.data.violations) {
+        } catch ({ response }) {
+            const  { violations } = response.data;
+            if(violations) {
                 const apiErrors = {};
-                error.response.data.violations.forEach(violation => {
-                    apiErrors[violation.propertyPath] = violation.message;
+                violations.forEach(({propertyPath, message}) => {
+                    apiErrors[propertyPath] = message;
                 })
                 setErrors(apiErrors);
             };
@@ -164,11 +165,11 @@ const Customerpage = (props) => {
 
                 <div className="form-group mt-4 text-center">
                     <button type="submit" className="btn btn-outline-primary">{!editing && "Enregistrer" || "Modifier"}</button>
-                    <Link to="/clients" className="btn btn-link">Annuler</Link>
+                    <Link to="/clients" className="btn btn-link">{!editing && "Annuler" || "Retour à la liste"}</Link>
                 </div>
             </form>
         </>
     );
 }
 
-export default Customerpage;
+export default CustomerPage;

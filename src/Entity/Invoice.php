@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get' => ['path' => '/factures/{id}'],
-        'patch' => ['path' => '/factures/{id}'],
+        'put' => ['path' => '/factures/{id}'],
         'delete' => ['path' => '/factures/{id}'],
         'increment' => [
             'method' => 'post',
@@ -68,11 +68,11 @@ class Invoice
 
     #[ORM\Column(type: 'decimal', precision: 7, scale: 2)]
     #[Groups(["invoices_read", "customers_read", "invoices_subresource"])]
-    #[Assert\NotBlank(message: "Le montant de la facture est obligatoire.")]
     #[Assert\Type(
         type: 'numeric',
         message: 'Le montant de la facture doit être numérique.',
-    )]
+        )]
+    #[Assert\NotBlank(message: "Le montant de la facture est obligatoire.")]
     private $amount;
 
     #[ORM\Column(type: 'datetime')]
