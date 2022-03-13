@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Field from '../components/forms/Field';
+import usersAPI from '../services/usersAPI';
 import UsersAPI from '../services/usersAPI';
 
 const RegisterPage = (props) => {
@@ -43,8 +44,7 @@ const RegisterPage = (props) => {
         }
 
         try {
-            const response = await axios
-                .post("http://127.0.0.1:8000/api/utilisateurs", user)
+            await UsersAPI.register(user)
             setErrors({});
             navigate("/login");
         } catch ({ response }) {
