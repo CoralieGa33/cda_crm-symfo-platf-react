@@ -47,8 +47,8 @@ class Customer
     #[Assert\Length(
         min: 2,
         max: 100,
-        minMessage: 'Le prénom doit faire au moins {{ limit }} charactères.',
-        maxMessage: 'Le prénom doit faire moins de {{ limit }} charactères.',
+        minMessage: 'Le prénom doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le prénom doit faire moins de {{ limit }} caractères.',
         )]
     #[Assert\NotBlank(message: "Le prénom du client est obligatoire.")]
     private $firstName;
@@ -58,8 +58,8 @@ class Customer
     #[Assert\Length(
         min: 2,
         max: 100,
-        minMessage: 'Le nom doit faire au moins {{ limit }} charactères.',
-        maxMessage: 'Le nom doit faire moins de {{ limit }} charactères.',
+        minMessage: 'Le nom doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom doit faire moins de {{ limit }} caractères.',
         )]
     #[Assert\NotBlank(message: "Le nom du client est obligatoire.")]
     private $lastName;

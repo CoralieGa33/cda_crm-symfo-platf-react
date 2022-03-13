@@ -102,11 +102,12 @@ const InvoicePage = (props) => {
     return (
         <>
             <h1 className='text-center'>{!editing && "Ajouter une facture" || "Modifier une facture"}</h1>
+            <p className="text-center">* Champs obligatoires</p>
 
             <form className='col-md-4 mx-auto' onSubmit={handleSubmit}>
                     <Field
                         name="amount"
-                        label="Montant de la facture"
+                        label="Montant de la facture *"
                         value={invoice.amount}
                         onChange={handleChange}
                         type="number"
@@ -116,7 +117,7 @@ const InvoicePage = (props) => {
 
                     <Select
                         name="customer"
-                        label="Choisir un client"
+                        label="Choisir un client *"
                         value={invoice.customer}
                         onChange={handleChange}
                         error = {errors.customer}
@@ -133,7 +134,7 @@ const InvoicePage = (props) => {
 
                     <Select
                         name="status"
-                        label="Choisir un status"
+                        label="Choisir un status *"
                         value={invoice.status}
                         onChange={handleChange}
                         error={errors.status}

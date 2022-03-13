@@ -22,7 +22,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     ],
     itemOperations: [
         'get' => ['path' => '/utilisateurs/{id}'],
-        'patch' => ['path' => '/utilisateurs/{id}'],
+        'put' => ['path' => '/utilisateurs/{id}'],
         'delete' => ['path' => '/utilisateurs/{id}']
     ],
     normalizationContext: ['groups' => ['users_read']],
@@ -38,38 +38,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 180)]
     #[Groups(["invoices_read", "invoices_subresource", "users_read"])]
-    #[Assert\NotBlank(message: "L'email est obligatoire.")]
     #[Assert\Email(
         message: "L'email {{ value }} n'est pas une adresse valide.",
-    )]
+        )]
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
     private $email;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
+    #[Assert\Length(
+        min: 5,
+        max: 100,
+        minMessage: 'Le mot de passe doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le prénom doit faire moins de {{ limit }} caractères.',
+        )]
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["invoices_read", "invoices_subresource", "users_read"])]
-    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
     #[Assert\Length(
         min: 2,
         max: 100,
-        minMessage: 'Le prénom doit faire au moins {{ limit }} charactères.',
-        maxMessage: 'Le prénom doit faire moins de {{ limit }} charactères.',
-    )]
+        minMessage: 'Le prénom doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le prénom doit faire moins de {{ limit }} caractères.',
+        )]
+    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["invoices_read", "invoices_subresource", "users_read"])]
-    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
     #[Assert\Length(
         min: 2,
         max: 100,
-        minMessage: 'Le nom doit faire au moins {{ limit }} charactères.',
-        maxMessage: 'Le nom doit faire moins de {{ limit }} charactères.',
-    )]
+        minMessage: 'Le nom doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom doit faire moins de {{ limit }} caractères.',
+        )]
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

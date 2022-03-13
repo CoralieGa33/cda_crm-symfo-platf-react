@@ -12,6 +12,7 @@ import HomePage from './js/pages/HomePage';
 import InvoicesPage from './js/pages/InvoicesPage';
 import InvoicePage from './js/pages/InvoicePage';
 import LoginPage from './js/pages/LoginPage';
+import RegisterPage from './js/pages/RegisterPage';
 import AuthAPI from './js/services/authAPI';
 
 // any CSS you import will output into a single css file (app.css in this case)
@@ -37,6 +38,7 @@ const App = () => {
                     <Routes>
                         <Route path='/' element={<HomePage />} />
                         <Route path='/login' element={<LoginPage />} />
+                        <Route path='/register' element={<RegisterPage />} />
                         <Route path='/clients' element={<PrivateRoute element={<CustomersPage />} />} />
                         {/* <Route path='/clients' element={<CustomersPagePlatPagination />} /> */}
                         <Route path='/clients/:id' element={<PrivateRoute element={<CustomerPage />} />} />

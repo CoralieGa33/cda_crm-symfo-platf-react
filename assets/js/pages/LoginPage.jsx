@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthAPI from '../services/authAPI';
 import AuthContext from '../contexts/AuthContext';
 import Field from '../components/forms/Field';
@@ -31,7 +31,7 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            await AuthAPI.authenticate(credentials)
+            AuthAPI.authenticate(credentials)
             setError("");
             setIsAuth(true);
             navigate("/clients")
@@ -63,8 +63,9 @@ const LoginPage = () => {
                     type="password"
                     error = {error}
                 />
-                <div className="form-group">
-                    <button type="submit" className="btn btn-outline-primary mt-4">Connexion</button>
+                <div className="form-group mt-4 text-center">
+                    <button type="submit" className="btn btn-outline-primary">Connexion</button>
+                    <Link to="/register" className="btn btn-link">Je n'ai pas de compte</Link>
                 </div>
             </form>
         </>

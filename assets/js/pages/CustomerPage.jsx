@@ -90,13 +90,14 @@ const CustomerPage = (props) => {
     return (
         <>
             <h1 className='text-center'>{!editing && "Ajouter un client" || "Détails du client"}</h1>
+            <p className="text-center">* Champs obligatoires</p>
 
             <form className='mx-auto' onSubmit={handleSubmit}>
                 <div className="d-flex justify-content-center">
                     <div className="col-md-5 p-2">
                         <Field
                             name="lastName"
-                            label="Nom de famille"
+                            label="Nom de famille *"
                             value={customer.lastName}
                             onChange={handleChange}
                             placeholder="Entrez le nom de famille du client"
@@ -104,7 +105,7 @@ const CustomerPage = (props) => {
                         />
                         <Field
                             name="firstName"
-                            label="Prénom"
+                            label="Prénom *"
                             value={customer.firstName}
                             onChange={handleChange}
                             placeholder="Entrez le prénom du client"
@@ -112,7 +113,7 @@ const CustomerPage = (props) => {
                         />
                         <Field
                             name="email"
-                            label="Email"
+                            label="Email *"
                             value={customer.email}
                             onChange={handleChange}
                             placeholder="Entrez l'email du client"
