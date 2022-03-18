@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React,  { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Field from '../components/forms/Field';
 import Select from '../components/forms/Select';
+import FormContentLoader from '../components/loaders/FormContentLoader';
 import CustomersAPI from '../services/customersAPI';
 import InvoicesAPI from '../services/invoicesAPI';
 
@@ -16,16 +18,14 @@ const InvoicePage = (props) => {
         customer: "",
         status: "SENT"
     });
-
     const [customers, setCustomers] = useState([]);
-
     const [errors, setErrors] = useState({
         amount: "",
         customer: "",
         status: ""
     });
-
     const [editing, setEditing] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     // Récupération d'une facture par son id
     const fetchInvoice = async (id) => {
@@ -33,8 +33,9 @@ const InvoicePage = (props) => {
             const data = await InvoicesAPI.findOne(id);
             const { amount, status, customer } = data;
             setInvoice({ amount, status, customer: customer.id });
+            setLoading(false);
         } catch (error) {
-            console.log(error.response);
+            toast.error("Erreur lors du chargement de la facture !")
             navigate("/factures");
         }
     };
@@ -44,9 +45,10 @@ const InvoicePage = (props) => {
         try {
             const data = await CustomersAPI.findAll();
             setCustomers(data);
+            setLoading(false);
             if(!invoice.customer) setInvoice({...invoice, customer: data[0].id});
         } catch (error) {
-            console.log(error.response);
+            toast.error("Erreur lors du chargement des clients !")
             navigate("/factures");
         }
     };
@@ -78,14 +80,15 @@ const InvoicePage = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setErrors({});
             if(editing) {
                 await InvoicesAPI.update(id, invoice);
-                // TODO : notification de succès
+                toast.success("La facture a bien été modifiée.")
             } else {
                 await InvoicesAPI.create(invoice);
+                toast.success("La facture a bien été enregistrée.")
                 navigate("/factures");
             }
-            setErrors({});
         } catch ({ response }) {
             const  { violations } = response.data;
             if(violations) {
@@ -95,6 +98,7 @@ const InvoicePage = (props) => {
                 });
                 setErrors(apiErrors);
             };
+            toast.error("Merci de vérifier tous les champs.")
         }
     }
 
@@ -104,7 +108,9 @@ const InvoicePage = (props) => {
             <h1 className='text-center'>{!editing && "Ajouter une facture" || "Modifier une facture"}</h1>
             <p className="text-center">* Champs obligatoires</p>
 
-            <form className='col-md-4 mx-auto' onSubmit={handleSubmit}>
+            {loading && <FormContentLoader /> }
+
+            {!loading && <form className='col-md-4 mx-auto' onSubmit={handleSubmit}>
                     <Field
                         name="amount"
                         label="Montant de la facture *"
@@ -148,7 +154,7 @@ const InvoicePage = (props) => {
                     <button type="submit" className="btn btn-outline-primary">{!editing && "Enregistrer" || "Modifier"}</button>
                     <Link to="/factures" className="btn btn-link">{!editing && "Annuler" || "Retour à la liste"}</Link>
                 </div>
-            </form>
+            </form> }
         </>
     );
 }

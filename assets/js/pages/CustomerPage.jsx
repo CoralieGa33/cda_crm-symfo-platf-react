@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Field from '../components/forms/Field';
+import FormContentLoader from '../components/loaders/FormContentLoader';
 import CustomersAPI from '../services/customersAPI';
 
 const CustomerPage = (props) => {
@@ -18,7 +19,6 @@ const CustomerPage = (props) => {
         city: "",
         phoneNumber: ""
     });
-
     const [errors, setErrors] = useState({
         lastName: "",
         firstName: "",
@@ -29,8 +29,8 @@ const CustomerPage = (props) => {
         city: "",
         phoneNumber: ""
     });
-
     const [editing, setEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     // Récupération d'un client par son id
     const fetchCustomer = async (id) => {
@@ -38,8 +38,9 @@ const CustomerPage = (props) => {
             const data = await CustomersAPI.findOne(id);
             const { lastName, firstName, email, company, streetAddress, postcode, city, phoneNumber } = await CustomersAPI.findOne(id);
             setCustomer({ lastName, firstName, email, company, streetAddress, postcode, city, phoneNumber });
+            setLoading(false);
         } catch (error) {
-            console.log(error.response);
+            toast.error("Erreur lors du chargement du client !")
             navigate("/clients");
         }
     };
@@ -47,6 +48,7 @@ const CustomerPage = (props) => {
     // Chargement du composant en fonction de la valeur de id
     useEffect(() => {
         if(id !== "new") {
+            setLoading(true);
             setEditing(true);
             fetchCustomer(id);
         }
@@ -67,14 +69,15 @@ const CustomerPage = (props) => {
         e.preventDefault();
 
         try {
+            setErrors({});
             if(editing) {
                 await CustomersAPI.update(id, customer);
-                // TODO : notification de succès
+                toast.success("Le client a bien été modifié.")
             } else {
                 await CustomersAPI.create(customer);
+                toast.success("Le client a bien été créé.")
                 navigate("/clients");
             }
-            setErrors({});
         } catch ({ response }) {
             const  { violations } = response.data;
             if(violations) {
@@ -84,6 +87,7 @@ const CustomerPage = (props) => {
                 })
                 setErrors(apiErrors);
             };
+            toast.error("Merci de vérifier tous les champs.")
         }
     }
 
@@ -92,7 +96,9 @@ const CustomerPage = (props) => {
             <h1 className='text-center'>{!editing && "Ajouter un client" || "Détails du client"}</h1>
             <p className="text-center">* Champs obligatoires</p>
 
-            <form className='mx-auto' onSubmit={handleSubmit}>
+            {loading && <FormContentLoader />}
+
+            {!loading && <form className='mx-auto' onSubmit={handleSubmit}>
                 <div className="d-flex justify-content-center">
                     <div className="col-md-5 p-2">
                         <Field
@@ -168,7 +174,7 @@ const CustomerPage = (props) => {
                     <button type="submit" className="btn btn-outline-primary">{!editing && "Enregistrer" || "Modifier"}</button>
                     <Link to="/clients" className="btn btn-link">{!editing && "Annuler" || "Retour à la liste"}</Link>
                 </div>
-            </form>
+            </form> }
         </>
     );
 }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthAPI from '../services/authAPI';
 import AuthContext from '../contexts/AuthContext';
 import Field from '../components/forms/Field';
+import { toast } from 'react-toastify';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -27,17 +28,22 @@ const LoginPage = () => {
     }
 
     // Gestion du submit du formulaire
+    /**
+     * 
+     * returns {Promise<string>} JSON
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            AuthAPI.authenticate(credentials)
+            await AuthAPI.authenticate(credentials)
             setError("");
             setIsAuth(true);
+            toast.success("Vous êtes désormais connecté !")
             navigate("/clients")
         } catch (error) {
             setError("Vérifiez vos informations.");
-            console.log(error)
+            toast.error("Une erreur est survenue.");
         }
     }
 
@@ -61,7 +67,6 @@ const LoginPage = () => {
                     onChange={handleChange}
                     placeholder="Entrez votre mot de passe"
                     type="password"
-                    error = {error}
                 />
                 <div className="form-group mt-4 text-center">
                     <button type="submit" className="btn btn-outline-primary">Connexion</button>

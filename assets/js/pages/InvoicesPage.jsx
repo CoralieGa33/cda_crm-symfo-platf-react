@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import TableLoader from '../components/loaders/TableLoader';
+import { toast } from 'react-toastify';
 import Pagination from '../components/Pagination';
 import invoicesAPI from '../services/invoicesAPI';
 
@@ -19,14 +21,17 @@ const InvoicesPage = (props) => {
     const [invoices, setInvoices] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
+
     const itemsPerPage = 10;
 
     const fetchInvoices = async () => {
         try {
             const data = await invoicesAPI.findAll();
             setInvoices(data);
+            setLoading(false);
         } catch(error) {
-            console.log(error.response)
+            toast.error("Erreur lors du chargement des factures !")
         }
     }
 
@@ -50,8 +55,10 @@ const InvoicesPage = (props) => {
 
         try {
             await invoicesAPI.delete(id)
+            toast.success("La facture a bien été supprimée.");
         } catch(error) {
             setInvoices(originalInvoices);
+            toast.error("Une erreur est survenue, la facture n'a pas été supprimée.");
         }
     };
     
@@ -99,11 +106,12 @@ const InvoicesPage = (props) => {
                         <th />
                     </tr>
                 </thead>
-                <tbody>
+
+                {!loading && <tbody>
                     {paginatedInvoices.map(invoice =>
                         <tr key={invoice.id}>
                             <td>{invoice.reference}</td>
-                            <td><a href="#">{invoice.customer.firstName} {invoice.customer.lastName}</a></td>
+                            <td><Link to={"/clients/" + invoice.customer.id}>{invoice.customer.firstName} {invoice.customer.lastName}</Link></td>
                             <td className="text-center">{new Date(invoice.sentAt).toLocaleDateString()}</td>
                             <td className="text-center"><span className={"badge bg-" + STATUS_CLASSES[invoice.status]}>{STATUS_LABELS[invoice.status]}</span></td>
                             <td className="text-center">{parseFloat(invoice.amount).toLocaleString("fr-FR", {style: "currency", currency: "EUR"})}</td>
@@ -113,8 +121,9 @@ const InvoicesPage = (props) => {
                             </td>
                         </tr>
                     )}
-                </tbody>
+                </tbody> }
             </table>
+            {loading && <TableLoader /> }
 
             <Pagination 
                 currentPage={currentPage}

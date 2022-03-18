@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Field from '../components/forms/Field';
 import usersAPI from '../services/usersAPI';
 import UsersAPI from '../services/usersAPI';
@@ -46,6 +47,7 @@ const RegisterPage = (props) => {
         try {
             await UsersAPI.register(user)
             setErrors({});
+            toast.success("Votre compte est disponible, vous pouvez maintenant vous connecter.")
             navigate("/login");
         } catch ({ response }) {
             const  { violations } = response.data;
@@ -56,6 +58,7 @@ const RegisterPage = (props) => {
                 })
                 setErrors(apiErrors);
             };
+            toast.error("Merci de vérifier tous les champs.")
         }
     }
 

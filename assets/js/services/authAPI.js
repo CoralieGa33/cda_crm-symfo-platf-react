@@ -24,7 +24,7 @@ function setAxiosToken(token) {
  * @param {object} credentials 
  */
 function authenticate(credentials) {
-    axios
+    return axios
         .post("http://127.0.0.1:8000/api/login_check", credentials)
         .then(response => response.data.token)
         .then(token => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 import Navbar from './js/components/Navbar';
 import PrivateRoute from './js/components/PrivateRoute';
@@ -17,6 +18,7 @@ import AuthAPI from './js/services/authAPI';
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -48,6 +50,7 @@ const App = () => {
                     </Routes>
                 </main>
             </Router>
+            <ToastContainer position={toast.POSITION.BOTTOM_LEFT} />
         </AuthContext.Provider>
     )
 };

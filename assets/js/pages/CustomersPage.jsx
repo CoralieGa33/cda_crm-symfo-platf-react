@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import TableLoader from '../components/loaders/TableLoader';
 import Pagination from '../components/Pagination';
 import customersAPI from '../services/customersAPI';
 
@@ -7,6 +8,8 @@ const CustomersPage = (props) => {
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
+
     const itemsPerPage = 10;
 
     // Récupérer la liste des clients
@@ -14,8 +17,9 @@ const CustomersPage = (props) => {
         try {
             const data = await customersAPI.findAll();
             setCustomers(data);
+            setLoading(false);
         } catch(error) {
-            console.log(error.response)
+            toast.error("Erreur lors du chargement des clients !")
         }
     }
 
@@ -30,16 +34,13 @@ const CustomersPage = (props) => {
         setCustomers(customers.filter(customer => customer.id !==id));
 
         try {
-            await customersAPI.delete(id)
+            await customersAPI.delete(id);
+            toast.success("Le client a bien été supprimé.");
         } catch(error) {
             setCustomers(originalCustomers);
+            toast.success("Une erreur est survenue, le client n'a pas été supprimé");
         }
-        // customersAPI.delete(id)
-        //     .then(response => console.log("Client supprimé"))
-        //     .catch(error => {
-        //         setCustomers(originalCustomers);
-        //         console.log(error.response);
-        //     })
+        
     };
 
     // Gestion du changement de page
@@ -97,16 +98,15 @@ const CustomersPage = (props) => {
                     </tr>
                 </thead>
 
-                <tbody>
+                {!loading && <tbody>
                     {paginatedCustomers.map(customer =>
                         <tr key={customer.id}>
-                            <td><a href="#">{customer.firstName} {customer.lastName}</a></td>
+                            <td><Link to={"/clients/" + customer.id}>{customer.firstName} {customer.lastName}</Link></td>
                             <td>{customer.email}</td>
                             <td>{customer.company}</td>
                             <td className="text-center"><span className="badge bg-dark">{customer.invoices.length}</span></td>
                             <td className="text-end">{parseFloat(customer.totalAmount).toLocaleString("fr-FR", {style: "currency", currency: "EUR"})}</td>
                             <td>
-                                <Link to={"/clients/" + customer.id} className="btn btn-sm btn-warning me-2">Editer</Link>
                                 <button
                                     onClick={() => handleDelete(customer.id)}
                                     disabled={customer.invoices.length > 0}
@@ -117,8 +117,9 @@ const CustomersPage = (props) => {
                             </td>
                         </tr>
                     )}
-                </tbody>
+                </tbody> }
             </table>
+            {loading && <TableLoader /> }
 
             {itemsPerPage < filteredCustomers.length &&
                 <Pagination 
