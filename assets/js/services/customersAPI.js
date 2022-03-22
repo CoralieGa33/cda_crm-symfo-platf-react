@@ -1,6 +1,7 @@
 import axios from "axios";
 import cache from "./cache";
 import Cache from "./cache";
+import { CUSTOMERS_API } from "../../config"
 
 async function findAll() {
     const cachedCustomers = await Cache.get("customers");
@@ -8,7 +9,7 @@ async function findAll() {
     if(cachedCustomers) return cachedCustomers;
 
     return axios
-    .get("http://127.0.0.1:8000/api/clients")
+    .get(CUSTOMERS_API)
     .then(response => {     
         // Méthode 1 : mettre le cache à jour si la requête s'est bien passée      
         const customers = response.data['hydra:member'];
@@ -22,7 +23,7 @@ async function findOne(id) {
     if(cachedCustomer) return cachedCustomer
 
     return axios
-        .get("http://127.0.0.1:8000/api/clients/" + id)
+        .get(CUSTOMERS_API + "/" + id)
         .then(response => {
             // Méthode 1 : mettre le cache à jour si la requête s'est bien passée  
             const customer = response.data;
@@ -33,7 +34,7 @@ async function findOne(id) {
 
 function create(customer) {
     return axios
-        .post("http://127.0.0.1:8000/api/clients", customer)
+        .post(CUSTOMERS_API, customer)
         .then(async response => {
             // Méthode 1 : mettre le cache à jour si la requête s'est bien passée  
             const cachedCustomers = await Cache.get("customers");
@@ -46,7 +47,7 @@ function create(customer) {
 
 function update(id, customer) {
     return axios
-        .put("http://127.0.0.1:8000/api/clients/" + id, customer)
+        .put(CUSTOMERS_API + "/" + id, customer)
         .then(async response => {
             // Méthode 1 : mettre le cache à jour si la requête s'est bien passée  
             const cachedCustomers = await Cache.get("customers");
@@ -64,7 +65,7 @@ function update(id, customer) {
 
 function deleteCustomer(id) {
     return axios
-        .delete("http://127.0.0.1:8000/api/clients/" + id)
+        .delete(CUSTOMERS_API + "/" + id)
         .then(async response => {
             // Méthode 2 : Vider le cache customers, il se réinitialisera au prochain chargement
             const cachedCustomers = await Cache.get("customers");
